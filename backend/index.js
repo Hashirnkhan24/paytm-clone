@@ -3,7 +3,6 @@ import express from "express";
 import connectDB from "./database/db.js";
 import cors from 'cors';
 import rootRouter from "./routes/index.js";
-import { JWT_SECRET } from "./config.js";
 
 const app = express();
 dotenv.config()

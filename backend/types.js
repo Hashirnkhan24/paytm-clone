@@ -10,6 +10,6 @@ const userData = z.object({
 const updateBody = z.object({
     password  : z.string().optional(),
     firstName : z.string().optional(),
-    lastName : z.string().optional
+    lastName : z.string().optional()
 })
 export { userData, updateBody }
