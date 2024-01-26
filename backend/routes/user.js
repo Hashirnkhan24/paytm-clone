@@ -1,8 +1,9 @@
 import express from "express";
-import { userData } from "../types";
+import { updateBody, userData } from "../types";
 import { User } from "../models/user.model.js" 
 import jwt from "jsonwebtoken"
 import { JWT_SECRET } from "../config.js";
+import { authMiddleware } from "../middleware.js";
 
 const router = express.Router();
 
@@ -58,5 +59,60 @@ router.post("/signin", async(req, res) => {
     res.status(411).json({
         message : "Invalid User details"
     })
+})
+
+
+router.put('/', authMiddleware, async(req, res) => {
+    const { password, firstName, lastName } = req.body
+    const parsedUpdateBody  = updateBody.safeParse({ password, firstName, lastName })
+
+    if(!parsedUpdateBody.success) {
+        res.status(411).json({
+            message : "Error updating information"
+        })
+    }
+
+    try {
+        const updateData = {}
+            if(password) updateData.password = password;
+            if(firstName) updateData.firstName = firstName;
+            if(lastName) updateData.lastName = lastName;
+
+        await User.updateOne(req.userId, updateData)
+        res.status(200).json({
+            message : "Updated successfully"
+        })
+    } catch(err) {
+        res.status(411).json({
+            message : "Error while updating information"
+        })
+    }
+})
+
+router.get('/bulk', async (req, res) => {
+    const filter = req.params.filter || "";
+
+    try {
+            const users = await User.find({
+            $or: [{
+                "$regex" : filter
+            }, {
+                "$regex" : filter
+            }]
+        })
+
+        res.status(200).json({
+            user : users.map((user) => ({
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                _id: user._id
+            }))
+        })
+        } catch(err) {
+            res.status(411).json({
+                message : "User not found"
+        })
+    }
 })
 export default router

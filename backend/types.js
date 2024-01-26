@@ -7,4 +7,9 @@ const userData = z.object({
     password : z.string()
 })
 
-export { userData }
+const updateBody = z.object({
+    password  : z.string().optional(),
+    firstName : z.string().optional(),
+    lastName : z.string().optional
+})
+export { userData, updateBody }
