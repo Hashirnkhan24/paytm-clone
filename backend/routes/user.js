@@ -55,7 +55,7 @@ router.post("/signin", async(req, res) => {
     if(user) {
         try {
             const userId = user._id
-            const token = jwt.sign(userId, JWT_SECRET)
+            const token = jwt.sign({userId}, JWT_SECRET)
 
             res.status(200).json({
                 token : token
@@ -67,9 +67,6 @@ router.post("/signin", async(req, res) => {
             })
         }
     }
-    res.status(411).json({
-        message : "Invalid User details"
-    })
 })
 
 
