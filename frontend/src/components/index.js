@@ -1,3 +1,7 @@
+import BottomWarning from "./BottomWarning";
+import Button from "./Button";
 import Heading from "./Heading";
+import InputBox from "./InputBox";
+import SubHeading from "./SubHeading";
 
-export {Heading}
+export {Heading, SubHeading, InputBox, Button, BottomWarning}
