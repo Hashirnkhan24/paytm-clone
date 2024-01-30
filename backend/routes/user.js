@@ -44,9 +44,6 @@ router.post('/signup', async(req, res) => {
             })
         }
     }
-    res.status(411).json({
-        message : " Incorrect Inputs"
-    })
 })
 
 router.post("/signin", async(req, res) => {
@@ -68,7 +65,6 @@ router.post("/signin", async(req, res) => {
         }
     }
 })
-
 
 router.put('/', authMiddleware, async(req, res) => {
     const { password, firstName, lastName } = req.body
@@ -119,6 +115,21 @@ router.get('/bulk', async (req, res) => {
         } catch(err) {
             res.status(411).json({
                 message : "User not found"
+        })
+    }
+})
+
+router.get('/', authMiddleware, async(req, res) => {
+    const userId = req.userId
+    try {
+        const user = await User.findOne({_id: userId})
+        res.status(200).json({
+            user : user
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(403).json({
+            message : "Error finding user"
         })
     }
 })

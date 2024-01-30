@@ -1,9 +1,9 @@
-const InputBox = ({label, placeholder}) => {
+const InputBox = ({label, placeholder, onChange, value}) => {
     return (
         <div className="mb-2">
             <div className="text-sm font-medium p-2">{label}</div>
             <div className="border border-slate-300 rounded-md p-2 shadow-sm">
-                <input type="text" placeholder={placeholder}  />
+                <input type="text" placeholder={placeholder} onChange={onChange} value={value} />
             </div>
         </div>
     )

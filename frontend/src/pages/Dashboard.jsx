@@ -1,54 +1,61 @@
 import { useEffect, useState } from "react";
 import { Navbar } from "../components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
 
-const Dashboard = ({ balance }) => {
-    const [userList, setUserList] = useState({
-        user: [],
-    });
-    const [searchTerm, setSearchTerm] = useState('');
+const Dashboard = () => {
+    const [users, setUsers] = useState([]);
+    const [balance, setBalance] = useState(0);
+    const [filter, setFilter] = useState("");
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/v1/user/bulk')
-            .then((response) => response.json())
-            .then((data) => setUserList(data))
-            .catch((error) => console.error("Error fetching userList:", error));
-        }, []);
+        axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
+            .then(response => {
+                setUsers(response.data.user)
+            })
+    }, [filter])
 
-    const handleSearch = (searchTerm) => {
-        setSearchTerm(searchTerm);
-    };
-
-    const filteredUsers = userList.user.filter((user) =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        const fetchbalance = async()=> {
+            const authToken = localStorage.getItem("token")
+            const response = await axios.get('http://localhost:3000/api/v1/account/balance',{
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                },
+            })
+            setBalance(response.data.balance.toFixed(2))
+        }
+        fetchbalance()
+    }, [])
 
     const navigate = useNavigate()
-    const sendMoneyOnClick = () => {
-        navigate("/send")
+    const sendMoneyOnClick = (user) => {
+        navigate("/send?id=" + user._id + "&name=" + user.firstName)
     }
 
     return (
         <div>
             <Navbar />
+            <div>
             <div className="p-4 text-white shadow-lg rounded-sm bg-blue-900 text-2xl font-semibold mt-3 ml-7 inline-block">
-                Your Balance ₹{balance || 5000}
+                Your Balance ₹{balance || 0}
             </div>
             <div>
                 <div className="mt-5 mx-4 text-2xl font-semibold text-blue-900">Users</div>
-                <div className="border shadow-md p-2 m-2  block-inline">
+                <div className="border shadow-md p-2 m-2  block-inline flex justify-between">
                 <input
                     type="text"
                     placeholder="Search..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="focus:outline-none w-full"
+                    onChange={(e) => {
+                        setFilter(e.target.value)
+                    }}
+                    className="focus:outline-none"
                 />
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="white"
-                    className="w-6 h-6 "
+                    className="w-7 h-7 bg-blue-900 p-1 rounded-sm"
                 >
                 <path
                     fillRule="evenodd"
@@ -59,16 +66,19 @@ const Dashboard = ({ balance }) => {
         </div>
         <div>
             <ul className="shadow-md mx-2">
-                {filteredUsers.map((user) => (
+                {users.map((user) => (
                 <li key={user.username} className="flex justify-between p-3 border">
                     <div>{user.username}</div>
                     <div>
-                        <button className="p-2 text-md bg-blue-900 text-white rounded-[3px]" onClick={sendMoneyOnClick}>Send Money</button>
+                        <button 
+                            className="p-2 text-md bg-blue-900 text-white rounded-[3px]" 
+                            onClick={() => sendMoneyOnClick(user)}>Send Money</button>
                     </div>
                 </li>
                 ))}
             </ul>
-                </div>
+            </div>
+            </div>
             </div>
         </div>
     );

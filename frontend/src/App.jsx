@@ -1,6 +1,6 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import {Dashboard, Signin, Signup, SendMoney} from './pages/index.js'
+import {Dashboard, Signin, Signup, SendMoney, ErrorPage} from './pages/index.js'
 
 function App() {
 
@@ -12,6 +12,7 @@ function App() {
         <Route path='/signup' element={<Signup />}></Route>
         <Route path='/dashboard' element={<Dashboard />}></Route>
         <Route path='/send' element={<SendMoney />}></Route>
+        <Route path='/error' element={<ErrorPage />}></Route>
       </Routes>
     </BrowserRouter>
     </>
