@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useUserData } from "../CustomHooks/UseUserData";
+import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     
     const [username, setUsername] = useState('User');
     const fetchUserFuntion = useUserData()
-    
+    const navigate = useNavigate()
     useEffect(() => {
         const fetchUserData = async() => {
             try {
@@ -17,17 +19,21 @@ const Navbar = () => {
         }
         fetchUserData()
     }, [])
-    
+    const onLogOut = () => {
+        localStorage.removeItem('token')
+        navigate('/')
+    }
     return (
-        <nav className="fixed-top flex justify-between p-2 shadow-md">
-            <div className="mx-3 font-bold text-xl text-blue-900">
+        <nav className="fixed-top flex justify-between items-center p-2 shadow-md">
+            <div className="mx-3 font-bold text-2xl text-blue-900">
                 Payments App
             </div>
-            <div className=" flex justify-end mx-3">
-                <h3 className="px-1">Hello, {username}</h3>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-6 h-6 bg-blue-900 rounded-full">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
+            <div className="flex justify-end items-center">
+                <div className=" flex justify-end mx-3">
+                    <h3 className="px-1 text-xl font-medium">Hello, {username}</h3>
+
+                </div>
+                <Button onClick={onLogOut} label={"Log Out"}></Button>
             </div>
         </nav>
     )
